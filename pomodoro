@@ -1,0 +1,49 @@
+#! /bin/bash
+
+CYCLE=4
+
+# Count down function
+_countdown(){
+  local MIN=$1
+  local SEC=$2
+    while [ $MIN -ge 0 ]; do
+      while [ $SEC -ge 0 ]; do
+              let "SEC=SEC-1"
+              sleep 1
+      done
+      SEC=59
+      let "MIN=MIN-1"
+    done
+}
+
+# Initail timers
+_inittime(){
+  WORK_MIN=25
+  WORK_SEC=0
+  SHORT_BREAK_MIN=5
+  SHORT_BREAK_SEC=0
+  LONG_BREAK_MIN=25
+  LONG_BREAK_SEC=0
+}
+
+_inittime
+
+# Infinit loop
+while true; do
+  if [ $CYCLE -ne 0 ] ; then
+    # Work time count down
+    notify-send -t 900 "Pomodoro" "Working time [ $WORK_MIN:$WORK_SEC ]"
+    _countdown $WORK_MIN $WORK_SEC
+
+    # Short break count down
+    notify-send -t 900 "Pomodoro" "Short break [ $SHORT_BREAK_MIN:$SHORT_BREAK_SEC ]"
+    _countdown $SHORT_BREAK_MIN $SHORT_BREAK_SEC
+    let "CYCLE=CYCLE-1"
+  else
+    # Long break count down
+    notify-send -t 900 "Pomodoro" "Long break [ $LONG_BREAK_MIN:$LONG_BREAK_SEC ]"
+    _countdown $LONG_BREAK_MIN $LONG_BREAK_SEC
+    CYCLE=4
+  fi
+  _inittime 
+done
